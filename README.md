@@ -139,22 +139,24 @@ trex> emu_load_profile -f emu/simple_dot1x.py -t --ns 2 --clients 5
 trex> emu_show_all
 ```
 
-### 3. ARP Tablosunu Görüntüleme
+## 📋 TRex Switch Test Adımları
+
+### 1. ARP Tablosunu Görüntüleme
 
 ```
-trex> show arp
+VM-IOSvL2-1> show arp
 ```
 
-### 4. dot1x İstatistiklerini Görüntüleme
+### 1. dot1x İstatistiklerini Görüntüleme
 
 ```
-trex> show dot1x statistics
+VM-IOSvL2-1> show dot1x statistics
 ```
 
-### 5. dot1x Oturumlarını Görüntüleme
+### 3. dot1x Oturumlarını Görüntüleme
 
 ```
-trex> show dot1x all
+VM-IOSvL2-1> show dot1x all
 ```
 
 ---
