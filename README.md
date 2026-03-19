@@ -139,7 +139,7 @@ trex> emu_load_profile -f emu/simple_dot1x.py -t --ns 2 --clients 5
 trex> emu_show_all
 ```
 
-## 📋 TRex Switch Test Adımları
+## 📋 Switch Test Adımları
 
 ### 1. ARP Tablosunu Görüntüleme
 
