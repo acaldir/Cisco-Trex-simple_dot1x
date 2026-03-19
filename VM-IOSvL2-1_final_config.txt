@@ -1,0 +1,260 @@
+VM-IOSvL2-1#show running-config 
+Building configuration...
+
+Current configuration : 6098 bytes
+!
+! Last configuration change at 08:52:17 UTC Thu Mar 19 2026
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+!
+hostname VM-IOSvL2-1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+aaa new-model
+!
+!
+aaa group server radius radg1
+ server name rad1
+!         
+aaa authentication dot1x default group radg1
+aaa authorization network default group radg1 
+!
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip cef
+no ipv6 cef
+!
+!
+dot1x system-auth-control
+dot1x logging verbose
+service-template webauth-global-inactive
+ inactivity-timer 3600 
+service-template webauth-global-absolute
+service-template DEFAULT_LINKSEC_POLICY_MUST_SECURE
+ linksec policy must-secure
+service-template DEFAULT_LINKSEC_POLICY_SHOULD_SECURE
+ linksec policy should-secure
+service-template DEFAULT_CRITICAL_VOICE_TEMPLATE
+ voice vlan
+errdisable recovery cause psecure-violation
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree vlan 172 priority 28672
+spanning-tree vlan 192 priority 24576
+!
+!
+!
+parameter-map type webauth AI_NRH_PMAP
+ type authbypass
+!
+!         
+parameter-map type webauth AI_WEBAUTH_PMAP
+ type webauth
+!
+lldp run
+!
+track 1 interface GigabitEthernet0/2 line-protocol
+!
+track 2 interface GigabitEthernet1/1 line-protocol
+!
+track 3 list boolean or
+ object 1
+ object 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+policy-map type control subscriber DOT1X-1
+ event session-started match-all
+  10 class always do-all
+   10 authenticate using dot1x priority 10
+ event authentication-failure match-first
+  10 class always do-all
+   10 terminate dot1x
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description primary_server_eth0
+ switchport access vlan 192
+ switchport mode access
+ switchport port-security mac-address 0c07.09ff.0000
+ switchport port-security
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet0/1
+ description secondary_server_eth0
+ switchport access vlan 172
+ switchport mode access
+ switchport port-security mac-address 0c89.1c99.0001
+ switchport port-security mac-address 0c8c.81c7.0001
+ switchport port-security
+ negotiation auto
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet0/2
+ description to_CSR1K_R6
+ switchport trunk allowed vlan 172,192
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ negotiation auto
+ spanning-tree bpduguard enable
+!
+interface GigabitEthernet0/3
+ switchport trunk allowed vlan 172,192
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ negotiation auto
+!
+interface GigabitEthernet1/0
+ description TREX-8021X-TEST
+ switchport access vlan 192
+ switchport mode access
+ negotiation auto
+ access-session control-direction in
+ access-session port-control auto
+ dot1x pae authenticator
+ dot1x timeout quiet-period 3
+ dot1x timeout server-timeout 5
+ dot1x timeout tx-period 2
+ dot1x timeout held-period 3
+ spanning-tree portfast edge
+ service-policy type control subscriber DOT1X-1
+!
+interface GigabitEthernet1/1
+ description to-virbr192
+ switchport access vlan 192
+ switchport mode access
+ negotiation auto
+!
+interface GigabitEthernet1/2
+ switchport trunk allowed vlan 172,192
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ negotiation auto
+!
+interface GigabitEthernet1/3
+ negotiation auto
+!
+interface Vlan111
+ no ip address
+ shutdown
+!
+interface Vlan172
+ description primary_tacas_server_eth1
+ ip address 172.16.124.100 255.255.255.0
+ vrrp 1 ip 172.16.124.254
+!         
+interface Vlan192
+ description primary_tacacs_server_eth0
+ ip address 192.168.124.100 255.255.255.0
+ standby 1 ip 192.168.124.254
+ standby 1 priority 255
+ standby 1 preempt
+ standby 1 authentication md5 key-string muji123.
+ standby 1 track 3 decrement 255
+!
+router ospf 1
+ log-adjacency-changes detail
+ network 192.168.124.0 0.0.0.255 area 0
+!
+ip default-gateway 192.168.124.1
+ip forward-protocol nd
+!
+ip http server
+ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 192.168.124.1
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!         
+ip access-list extended AI_PORT_ACL
+ permit ip any any
+!
+!
+!
+!
+!
+!
+radius server rad1
+ address ipv4 192.168.124.10 auth-port 1812 acct-port 1813
+ key switch1
+!
+!
+control-plane
+!
+banner exec ^C
+IOSv - Cisco Systems Confidential -
+
+Supplemental End User License Restrictions
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+          
+          
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner incoming ^C
+IOSv - Cisco Systems Confidential -
+
+Supplemental End User License Restrictions
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner login ^C
+IOSv - Cisco Systems Confidential -
+
+Supplemental End User License Restrictions
+          
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+!
+line con 0
+line aux 0
+line vty 0 4
+!
+!
+end
